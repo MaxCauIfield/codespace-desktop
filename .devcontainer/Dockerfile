@@ -25,3 +25,5 @@ RUN apt-get update && \
 	add-apt-repository ppa:mozillateam/ppa && \
 	apt-get update && \
     apt-get install -y firefox
+	# 安装 Tailscale
+	RUN curl -fsSL https://tailscale.com/install.sh | sh
