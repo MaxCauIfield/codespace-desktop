@@ -4,7 +4,7 @@
 # 管理控制台
 [![](https://img.shields.io/badge/创建容器-brightgreen?style=for-the-badge&logo=github)](https://github.com/codespaces/new)
 [![](https://img.shields.io/badge/管理容器-blue?style=for-the-badge&logo=github)](https://github.com/codespaces)
-[![](https://img.shields.io/badge/复制连接IP-orange?style=for-the-badge&logo=github)](https://login.tailscale.com/admin/machines)
+[![](https://img.shields.io/badge/管理穿透IP-orange?style=for-the-badge&logo=github)](https://login.tailscale.com/admin/machines)
 [![](https://img.shields.io/badge/Fork仓库-8A2BE2?style=for-the-badge&logo=github)](https://github.com/MaxCauIfield/codespace-desktop/fork)
 ## 如何使用？
 ### 需求
