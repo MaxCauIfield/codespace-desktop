@@ -16,7 +16,7 @@
 
 已集成Tailscale到CodeSpace中，首次部署时，会在Terminal中显示Tailscale的授权链接，完成授权后，后续启动桌面环境时会自动运行Tailscale，您无需执行任何操作，直接使用VNC连接即可
 
-若未能找到，您可在终端中执行 `sudo tailscale up` 来解决
+若未能找到或删除了授权，您可在终端中执行 `sudo tailscale up` 来执行或重新赋予授权
 
 默认键盘布局为英语（美国）。您可以在 Cinnamon 设置中进行更改。
 
