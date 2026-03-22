@@ -1,13 +1,16 @@
 # GitHub Codespaces 上的 Cinnamon 桌面环境
 此设置将安装一个搭载 Cinnamon 桌面环境的 Ubuntu 24.04 容器，并配置 VNC 连接。
 
-{ "schemaVersion": 1, "label": "hello", "message": "sweet world", "color": "orange" }
+---
 
-通常情况下，在 Codespaces 中运行桌面环境是允许的——微软官方甚至提供了关于如何搭建基于 Fluxbox 的桌面环境（并集成浏览器）的文档：https://github.com/devcontainers/features/tree/main/src/desktop-lite。
-不过在本文中，我们将改用 Cinnamon 桌面环境。只要您负责任地使用该服务，并严格遵守 GitHub 的《服务条款》，就无需担心任何账号方面的问题。
+[![](https://img.shields.io/badge/创建容器-brightgreen?style=for-the-badge&logo=github)](https://github.com/codespaces/new)
+[![](https://img.shields.io/badge/管理容器-blue?style=for-the-badge&logo=github)](https://github.com/codespaces)
+[![](https://img.shields.io/badge/复制连接IP-orange?style=for-the-badge&logo=github)](https://login.tailscale.com/admin/machines)
+[![](https://img.shields.io/badge/Fork仓库-8A2BE2?style=for-the-badge&logo=github)](https://github.com/MaxCauIfield/codespace-desktop/fork)
 
+---
 
-# 如何使用？
+## 如何使用？
 ### 需求
 一个Tailscale账户，注册地址： https://login.tailscale.com/admin/machines
 ### 步骤
@@ -23,12 +26,18 @@
 
 已集成Tailscale到CodeSpace中，首次部署时，会在Terminal中显示Tailscale的授权链接，完成授权后，后续启动桌面环境时会自动运行Tailscale，您无需执行任何操作，直接使用VNC连接即可
 
-若未能找到或删除了授权，您可在终端中执行 `sudo tailscale up` 来执行或重新赋予授权
+若未能找到或删除了授权，您可在终端中执行以下命令来执行或重新赋予授权
+```
+sudo tailscale up
+```
 
 默认键盘布局为英语（美国）。您可以在 Cinnamon 设置中进行更改。
 
 若要运行 Windows 应用程序，请安装 Wine：https://wiki.winehq.org/Ubuntu
 
+## 这是否被允许？
+通常情况下，在 Codespaces 中运行桌面环境是允许的——微软官方甚至提供了关于如何搭建基于 Fluxbox 的桌面环境（并集成浏览器）的文档：https://github.com/devcontainers/features/tree/main/src/desktop-lite。
+不过在本文中，我们将改用 Cinnamon 桌面环境。只要您负责任地使用该服务，并严格遵守 GitHub 的《服务条款》，就无需担心任何账号方面的问题。
 # 局限性与错误
 - 无法启用硬件加速，因为 Codespace 不具备 GPU
 - 终端无法打开。请改用 Xfce Terminal 或其他终端工具
