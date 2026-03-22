@@ -36,11 +36,11 @@ sudo tailscale up
 ## 这是否被允许？
 通常情况下，在 Codespaces 中运行桌面环境是允许的——微软官方甚至提供了关于如何搭建基于 Fluxbox 的桌面环境（并集成浏览器）的文档：https://github.com/devcontainers/features/tree/main/src/desktop-lite。
 不过在本文中，我们将改用 Cinnamon 桌面环境。只要您负责任地使用该服务，并严格遵守 GitHub 的《服务条款》，就无需担心任何账号方面的问题。
-# 局限性与错误
+## 局限性与错误
 - 无法启用硬件加速，因为 Codespace 不具备 GPU
 - 终端无法打开。请改用 Xfce Terminal 或其他终端工具
 
-# 截图
+## 截图
 
 ![2024-05-31 20 36 02](https://github.com/AndnixSH/codespace-desktop/assets/40742924/efe23986-9024-457f-8e10-d04ac1898b18)
 
