@@ -6,6 +6,9 @@
 
 
 # 如何使用？
+### 需求
+一个Tailscale账户，注册地址： https://login.tailscale.com/admin/machines
+### 步骤
 1. Fork此项目，并点上Star
 2. 创建新的桌面空间: https://github.com/codespaces/new
 3. 选择Fork的Codespace存储库，如 `MaxCauifield/codespace-desktop`
