@@ -1,23 +1,23 @@
 # GitHub Codespaces 上的 Cinnamon 桌面环境
 
-## 管理控制台
+## 💻 管理控制台
 
 [![](https://img.shields.io/badge/创建容器-brightgreen?style=for-the-badge&logo=github)](https://github.com/codespaces/new)
 [![](https://img.shields.io/badge/管理容器-blue?style=for-the-badge&logo=github)](https://github.com/codespaces)
 [![](https://img.shields.io/badge/管理穿透IP-orange?style=for-the-badge&logo=github)](https://login.tailscale.com/admin/machines)
 [![](https://img.shields.io/badge/管理AUTHKEY-orange?style=for-the-badge&logo=github)](https://login.tailscale.com/admin/settings/keys)
 [![](https://img.shields.io/badge/Fork仓库-8A2BE2?style=for-the-badge&logo=github)](https://github.com/MaxCauIfield/codespace-desktop/fork)
-## 介绍
+## 📖 项目简介
 ![2024-05-31 20 36 02](https://github.com/AndnixSH/codespace-desktop/assets/40742924/efe23986-9024-457f-8e10-d04ac1898b18)
 
 一个基于CodeSpaceIDE，搭载 Cinnamon 桌面环境的 Ubuntu 24.04 容器。
-## 核心特色
-- ​🌐 **混合组网** 支持客户端/网页两种登录方式登录VNC环境，敏感认证均有环境变量保护
-- ​🛡️ **安全传输** 所有端口与访问需经过Github认证+Tailscale加密传输，深度保障访问安全
-- ​📦 **开箱即用** 详细的文档，精心的配置流程，自动化的流程，本土化适配，方便省心
-- ​🚀 **性能优化** 默认1280x720分辨率，轻量桌面，极简高效，原生VNC协议，传输效率高
-- ​🛠️ **工具集成** 核心组件与扩展包分离，模块设计灵活选装，开发者友好，适配不同场景
-## 快速部署
+## ✨ 核心特色
+- ​🌐 **混合组网** 支持客户端/网页两种登录方式，敏感认证均有环境变量保护
+- ​🛡️ **安全传输** 所有访问经过认证+加密传输，环境变量保护，深度保障安全
+- ​📦 **开箱即用** 详细的文档，精心的配置，自动化的流程，本土化适配
+- ​🚀 **性能优化** 1280x720原生VNC协议，轻量桌面，传输极简且高效
+- ​🛠️ **工具集成** 核心组件与扩展包分离，模块设计灵活选装，开发者友好
+## 💡 快速部署
 ### 需求
 - Fork此项目，并点上Star
 - 一个Tailscale账户，注册地址： https://login.tailscale.com/admin/machines
@@ -59,7 +59,7 @@ sudo tailscale up
 
 若要运行 Windows 应用程序，请安装 Wine：https://wiki.winehq.org/Ubuntu
 
-## Github隐私政策说明
+## 🚨 Github隐私政策说明
 在 Codespaces 中运行桌面环境通常是被允许的
 
 微软官方甚至提供了关于如何搭建基于 Fluxbox 的桌面环境（并集成浏览器）的文档：https://github.com/devcontainers/features/tree/main/src/desktop-lite。
@@ -67,13 +67,14 @@ sudo tailscale up
 不过在本文中，我们将改用 Cinnamon 桌面环境。
 
 因此，请负责任地使用该服务，并严格遵守 GitHub 的《服务条款》，就无需担心任何账号方面的问题。
-## 局限性与错误
+## ⛔ 局限性与错误
 - 无法启用硬件加速，因为 Codespace 不具备 GPU
 - 终端无法打开。请改用 Xfce Terminal 或其他终端工具，系统语言汉化不完整
 - 由于Tailscale的限制，AuthKey有效期最长为90天，过期后请重新生成Key，并将其填入仓库的环境变量中
 
-## 截图
+## 🙏 鸣谢
 
-![2024-05-31 20 36 02](https://github.com/AndnixSH/codespace-desktop/assets/40742924/efe23986-9024-457f-8e10-d04ac1898b18)
-
-![2024-05-31 20 35 27](https://github.com/AndnixSH/codespace-desktop/assets/40742924/5ddd627e-d48f-413c-a153-dff1173e75de)
+#### 💖 本项目引用了以下开源代码
+- https://github.com/AndnixSH/codespace-desktop
+#### 🛠 本项目使用以下协议分发
+- GPL- v3.0
