@@ -8,7 +8,7 @@
 [![](https://img.shields.io/badge/管理AUTHKEY-orange?style=for-the-badge&logo=github)](https://login.tailscale.com/admin/settings/keys)
 [![](https://img.shields.io/badge/Fork仓库-8A2BE2?style=for-the-badge&logo=github)](https://github.com/MaxCauIfield/codespace-desktop/fork)
 ## 📖 项目简介
-![2024-05-31 20 36 02](https://github.com/user-attachments/assets/d24ce13d-93cc-4901-ab9d-e9fc881a600e)
+![2024-05-31 20 36 02](https://github.com/user-attachments/assets/4ad02b06-5019-4d2e-85f0-4e0cbfcaa578)
 
 
 一个基于CodeSpaceIDE，搭载 Cinnamon 桌面环境的 Ubuntu 24.04 容器。
