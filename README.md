@@ -13,12 +13,13 @@
 
 一个基于CodeSpaceIDE，搭载 Cinnamon 桌面环境的 Ubuntu 24.04 容器。
 ## ✨ 核心特色
-- ​🌐 **混合组网** 支持RDP/VNC/网页三种登录方式，敏感认证均有环境变量保护
+- ​🌐 **混合组网** 支持SSH/RDP/VNC/网页四种登录方式，敏感认证均有环境变量保护
 - ​🛡️ **安全传输** 所有访问经过认证+加密传输，环境变量保护，深度保障安全
 - ​📦 **开箱即用** 详细的文档，精心的配置，自动化的流程，本土化适配
-- ​🚀 **性能优化** 1280x720原生VNC/RDP协议，轻量桌面，传输极简且高效
+- ​🚀 **性能优化** TCP Fast Open + BBR拥塞控制，1280x720固定分辨率，流畅体验
 - ​🛠️ **工具集成** 核心组件与扩展包分离，模块设计灵活选装，开发者友好
-- ​💻 **RDP支持** 新增Windows远程桌面协议支持，Windows用户可直接使用mstsc连接
+- ​💻 **RDP支持** Windows远程桌面协议支持，Windows用户可直接使用mstsc连接
+- ​🔐 **SSH支持** 内置OpenSSH服务器，支持命令行访问和X11转发
 ## 💡 快速部署
 ### 需求
 - Fork此项目，并点上Star
@@ -42,31 +43,59 @@ TAILSCALE_AUTHKEY
 4. 选择机器类型，若要解锁更高级的机器类型, 请在Github上[提交工单](https://support.github.com/contact?tags=rr-codespaces%2Ccat_codespace)
 5. 点击 创建**CodeSpace（Create）**，创建过程需要耗费一些时间。
 ### 连接方式
-提供3种不同的连接方式，推荐使用Tailscale+客户端连接
+提供4种不同的连接方式，推荐使用Tailscale+客户端连接
 
-#### 1. RDP连接 (推荐Windows用户)
+#### 1. SSH连接 (推荐开发者)
+通过SSH命令行访问容器，支持X11转发和文件传输：
+
+1. 在 Tailscale 管理控制台获取 Codespace 的 IP 地址
+2. 连接命令：
+   ```bash
+   ssh root@<Tailscale-IP>
+   ```
+3. 登录信息：
+   - **用户名**: `root`
+   - **密码**: `codespace`
+4. X11转发（可选）：
+   ```bash
+   ssh -X root@<Tailscale-IP>
+   ```
+
+**注意**: SSH使用22端口，已在devcontainer.json中配置转发。首次连接需确认主机密钥指纹。
+
+#### 2. RDP连接 (推荐Windows用户)
 通过Windows自带的远程桌面客户端连接，体验最佳：
 
 1. 在 Tailscale 管理控制台获取 Codespace 的 IP 地址
 2. 打开 Windows 远程桌面连接 (mstsc)
 3. 输入 Tailscale IP 地址，点击连接
 4. 登录信息：
-   - **用户名**: `root` (或 `vscode`)
+   - **用户名**: `root`
    - **密码**: `password` (与VNC密码相同)
+   - **分辨率**: 固定 1280x720
 5. 首次连接时会出现证书警告，点击"是"继续
 
-**注意**: RDP使用3389端口，已在devcontainer.json中配置转发
+**注意**: RDP使用3389端口，分辨率固定为1280x720以保证流畅度
 
-#### 2. VNC客户端连接
+#### 3. VNC客户端连接
 本项目已集成Tailscale，因此无需在服务端安装
+
+**推荐客户端**：TigerVNC Viewer / RealVNC / TightVNC
+
+1. 在 Tailscale 管理控制台获取 Codespace 的 IP 地址
+2. VNC 连接地址：`<Tailscale-IP>:5900`
+3. 密码：`password`
+4. 分辨率：固定 1280x720
 
 若服务未能启动，您可在终端中执行以下命令来重新启动Tailscale
 ```
 sudo tailscale up
 ```
 
-#### 3. 网页连接 (Web VNC)
+#### 4. 网页连接 (Web VNC)
 创建完成后, 打开 PORTS 标签页, 访问转发地址, 点击 `vnc.html` 并输入你的VNC密码
+
+默认分辨率：1280x720
 
 默认的 VNC 密码仅为 `password`。您可以通过在终端中运行 `vncpasswd` 命令来更改它。
 
@@ -87,6 +116,19 @@ sudo tailscale up
 - 无法启用硬件加速，因为 Codespace 不具备 GPU，系统语言汉化不完整
 - 由于Tailscale的限制，AuthKey有效期最长为90天，过期后请重新生成Key，并将其填入仓库的环境变量中
 - ~~终端无法打开~~（已修复）
+
+## 🚀 网络优化
+容器已内置网络性能优化，针对Tailscale隧道进行了特别调整：
+
+| 优化项 | 配置 | 效果 |
+|--------|------|------|
+| TCP Fast Open | 启用 | 减少连接建立延迟 |
+| BBR拥塞控制 | 启用 | 提升高延迟网络下的吞吐量 |
+| TCP缓冲区 | 16MB | 优化大带宽延迟积网络 |
+| VNC/RDP分辨率 | 1280x720 | 平衡清晰度与带宽占用 |
+| 压缩算法 | 启用 | 减少数据传输量 |
+
+如需调整分辨率或其他参数，请修改 `start-desktop.sh` 中的配置。
 
 ## 🙏 鸣谢
 

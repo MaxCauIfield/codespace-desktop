@@ -52,13 +52,23 @@ ENV GLFW_IM_MODULE=ibus
 # 安装 Tailscale
 RUN curl -fsSL https://tailscale.com/install.sh | sh
 
-# 安装 xrdp (RDP服务器) 和 Xorg 后端
+# 安装 xrdp (RDP服务器)、Xorg 后端和 OpenSSH 服务器
 RUN apt-get update && \
     apt-get install -y \
         xrdp \
-        xorgxrdp && \
+        xorgxrdp \
+        openssh-server && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# 配置 SSH 服务器
+RUN mkdir -p /var/run/sshd && \
+    echo 'root:codespace' | chpasswd && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#X11UseLocalhost yes/X11UseLocalhost no/' /etc/ssh/sshd_config && \
+    echo 'export DISPLAY=:1' >> /etc/profile
 
 # 配置 xrdp 使用 Xvnc 后端连接到 TigerVNC
 RUN sed -i 's/^port=3350/port=-1/' /etc/xrdp/sesman.ini && \
@@ -67,6 +77,16 @@ RUN sed -i 's/^port=3350/port=-1/' /etc/xrdp/sesman.ini && \
     sed -i 's/^crypt_level=.*/crypt_level=high/' /etc/xrdp/xrdp.ini && \
     sed -i 's/^max_bpp=.*/max_bpp=24/' /etc/xrdp/xrdp.ini && \
     sed -i 's/^#xserverbpp=24/xserverbpp=24/' /etc/xrdp/xrdp.ini
+
+# 配置网络优化 - TCP性能调整
+RUN echo '# 网络性能优化' >> /etc/sysctl.conf && \
+    echo 'net.ipv4.tcp_fast_open = 3' >> /etc/sysctl.conf && \
+    echo 'net.core.rmem_max = 16777216' >> /etc/sysctl.conf && \
+    echo 'net.core.wmem_max = 16777216' >> /etc/sysctl.conf && \
+    echo 'net.ipv4.tcp_rmem = 4096 87380 16777216' >> /etc/sysctl.conf && \
+    echo 'net.ipv4.tcp_wmem = 4096 65536 16777216' >> /etc/sysctl.conf && \
+    echo 'net.ipv4.tcp_congestion_control = bbr' >> /etc/sysctl.conf && \
+    echo 'net.ipv4.tcp_notsent_lowat = 16384' >> /etc/sysctl.conf
 
 # 设置 xrdp 用户权限
 RUN usermod -a -G ssl-cert xrdp && \
