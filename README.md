@@ -1,5 +1,7 @@
 # Google Cloud Shell Desktop Environment
 
+由于CloudShell权限问题未解决，此分支暂不更新
+
 基于 Docker 的 LXDE 桌面环境，支持 Tailscale 组网、Web VNC、SSH 和 RDP 连接。
 
 ## 🚨 首次使用必读：修复权限问题
