@@ -2,9 +2,13 @@
 
 基于 Docker 的 LXDE 桌面环境，支持 Tailscale 组网、Web VNC、SSH 和 RDP 连接。
 
+## ⚠️ 重要提示
+
+确保你在 **home 目录** 下操作（运行 `cd ~`），否则会遇到权限错误。
+
 ## 🚀 一键部署
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/AnnaofArendelle/codespace-desktop.git&cloudshell_git_branch=GCP-Verson&cloudshell_shell_cmd=chmod%20%2Bx%20install.sh%20%26%26%20./install.sh&shellonly=true)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/AnnaofArendelle/codespace-desktop.git&cloudshell_git_branch=GCP-Verson&cloudshell_shell_cmd=cd%20~%20%26%26%20chmod%20%2Bx%20install.sh%20%26%26%20./install.sh&shellonly=true)
 
 ## 📋 前置要求
 
@@ -60,12 +64,16 @@ export TAILSCALE_AUTHKEY=tskey-auth-xxxxxxxxxxxxxxxxxxxx
 ### 方法二：手动克隆运行
 
 1. 打开 [Google Cloud Shell](https://ssh.cloud.google.com)
-2. 克隆仓库：
+2. **切换到 home 目录**（重要！）：
+   ```bash
+   cd ~
+   ```
+3. 克隆仓库：
    ```bash
    git clone -b GCP-Verson https://github.com/AnnaofArendelle/codespace-desktop.git cloudshell-desktop
    cd cloudshell-desktop
    ```
-3. 运行安装脚本（按提示输入密钥）：
+4. 运行安装脚本（按提示输入密钥）：
    ```bash
    chmod +x install.sh && ./install.sh
    ```
@@ -75,6 +83,9 @@ export TAILSCALE_AUTHKEY=tskey-auth-xxxxxxxxxxxxxxxxxxxx
 如果你不想在安装时交互式输入，可以预先设置：
 
 ```bash
+# 切换到 home 目录
+cd ~
+
 # 一次性设置，持久化到 .bashrc
 echo 'export TAILSCALE_AUTHKEY=tskey-auth-xxxxxxxx' >> ~/.bashrc
 source ~/.bashrc
@@ -187,6 +198,25 @@ DESKTOP_IMAGE="dorowu/ubuntu-desktop-lxde-vnc"
 | 固定分辨率 | 1280x720 | 平衡清晰度与性能 |
 
 ## 🛠️ 故障排除
+
+### 权限被拒绝 (Permission denied)
+
+如果遇到 `Permission denied` 错误（尤其是 `.bashrc` 或 `git clone`）：
+
+**问题原因**：当前不在 home 目录下，或者 home 目录权限异常
+
+**解决方案**：
+```bash
+# 1. 切换到 home 目录
+cd ~
+
+# 2. 修复 home 目录权限（如果上述无效）
+sudo chown -R $USER:$USER $HOME
+
+# 3. 重新尝试操作
+git clone -b GCP-Verson https://github.com/AnnaofArendelle/codespace-desktop.git cloudshell-desktop
+cd cloudshell-desktop && ./install.sh
+```
 
 ### 容器无法启动
 ```bash
