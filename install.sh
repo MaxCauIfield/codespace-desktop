@@ -91,7 +91,8 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# 安装网络工具用于检查端口
+# 安装网络工具用于检查端口（设置非交互式避免键盘配置提示）
+export DEBIAN_FRONTEND=noninteractive
 sudo apt-get update -qq 2>/dev/null || true
 sudo apt-get install -y -qq net-tools socat 2>/dev/null || echo "  网络工具安装跳过"
 
