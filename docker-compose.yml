@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  desktop:
+    image: dorowu/ubuntu-desktop-lxde-vnc
+    container_name: cloudshell-desktop
+    hostname: cloudshell-desktop
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "5900:5900"
+    volumes:
+      - $HOME:/root
+      - $HOME/.vnc:/root/.vnc:ro
+    environment:
+      - RESOLUTION=1280x720
+      - VNC_PASSWORD=${VNC_PASSWORD:-password}
+      - USER=root
+      - PASSWORD=${ROOT_PASSWORD:-cloudshell}
+    networks:
+      - desktop-network
+
+networks:
+  desktop-network:
+    driver: bridge

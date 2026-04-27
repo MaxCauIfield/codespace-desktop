@@ -1,0 +1,15 @@
+# Google Cloud Shell 配置文件
+# 用于自定义 Cloud Shell 环境
+
+# 欢迎消息
+welcomeMessage: |
+  🖥️  Cloud Shell Desktop Environment
+  
+  快速开始:
+  1. export TAILSCALE_AUTHKEY=your_key_here
+  2. chmod +x install.sh && ./install.sh
+  
+  更多信息: cat README.md
+
+# 启动命令（可选，这里留空让用户手动执行）
+# startupScript: ./install.sh
