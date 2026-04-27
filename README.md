@@ -110,34 +110,32 @@ cd cloudshell-desktop && ./install.sh
 
 ## 🔌 连接方式
 
-### 1. Web VNC（最简单）
+### 1. Web VNC（推荐，最可靠）
 
-Cloud Shell 会自动代理 8080 端口，直接点击 Web 预览按钮即可访问桌面。
+Cloud Shell 会自动代理 8080 端口，这是**最稳定**的访问方式：
 
 - **预览按钮**: Cloud Shell 工具栏中的 "Web 预览"（选择端口 8080）
 - **直接访问**: https://ssh.cloud.google.com/devshell/proxy?port=8080
 - **VNC 密码**: `password`（可在脚本中修改 `VNC_PASSWORD` 变量）
 
-### 2. Tailscale + VNC 客户端
+> ✅ **推荐**: Web VNC 不受 Cloud Shell 网络限制，始终可用
 
-适用于需要最佳画质和性能的场景：
+### 2. Tailscale + VNC 客户端（可能受限）
+
+> ⚠️ **警告**: Google Cloud Shell 对出站端口有限制，VNC 客户端连接可能失败
+
+如果需要通过 VNC 客户端连接：
 
 1. 在你的设备上安装 [Tailscale](https://tailscale.com/download)
 2. 登录同一个 Tailscale 账号
 3. 在 [Tailscale 控制台](https://login.tailscale.com/admin/machines) 查看 Cloud Shell 设备的 IP
-4. 使用 VNC 客户端连接：
-   - **地址**: `<Tailscale-IP>:5900`
-   - **密码**: `password`
+4. 尝试连接：`<Tailscale-IP>:5900`
 
-**推荐 VNC 客户端**:
-- Windows: [TigerVNC Viewer](https://tigervnc.org/), [RealVNC](https://www.realvnc.com/)
-- macOS: [TigerVNC](https://tigervnc.org/), [Screen Sharing](https://support.apple.com/guide/mac-help/mh11848/mac)
-- Linux: Remmina, TigerVNC
-- iOS/Android: RealVNC, Jump Desktop
+**注意**: 由于 Cloud Shell 的安全策略，外部 VNC/RDP 连接可能被阻止。如果无法连接，请使用 Web VNC（方法1）。
 
 ### 3. Tailscale + SSH
 
-适合命令行操作和文件传输：
+Cloud Shell 已内置 SSH 访问。如需通过 Tailscale SSH：
 
 ```bash
 ssh root@<Tailscale-IP>
@@ -145,20 +143,16 @@ ssh root@<Tailscale-IP>
 - **用户名**: `root`
 - **密码**: `cloudshell`
 
-支持 X11 转发运行图形程序：
-```bash
-ssh -X root@<Tailscale-IP> firefox
-```
+### 4. Tailscale + RDP（Windows，可能受限）
 
-### 4. Tailscale + RDP（Windows 推荐）
+> ⚠️ **警告**: RDP 端口 3389 可能受 Cloud Shell 网络策略限制
 
-Windows 用户可使用自带的远程桌面客户端：
+Windows 用户可尝试远程桌面客户端：
+- **地址**: `<Tailscale-IP>:3389`
+- **用户名**: `root`
+- **密码**: `cloudshell`
 
-1. 按 `Win + R`，输入 `mstsc` 打开远程桌面
-2. 输入 Tailscale IP 地址
-3. 登录信息：
-   - **用户名**: `root`
-   - **密码**: `cloudshell`
+**如果连接失败，请使用 Web VNC**
 
 ## 📦 持久化说明
 
@@ -257,6 +251,8 @@ docker ps
 ## ⚠️ 限制说明
 
 - **会话时长**: Cloud Shell 会话约 12 小时无活动后会休眠
+- **长时间运行**: Cloud Shell 不允许长时间保活进程，脚本已优化为启动后退出，服务在后台运行
+- **网络限制**: Cloud Shell 对出站端口有限制，VNC/RDP 客户端连接可能失败，请使用 Web VNC
 - **存储空间**: 免费版提供 5GB 持久化存储
 - **计算资源**: 1 vCPU, 1.7GB 内存（免费版）
 - **无 GPU**: 无法运行需要硬件加速的应用

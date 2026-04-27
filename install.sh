@@ -84,105 +84,19 @@ fi
 echo "  Tailscale IP 地址:"
 sudo tailscale ip -4 2>/dev/null || echo "    (未获取到IP，可能尚未登录)"
 
-# 3. 安装必要软件
-echo "[3/6] 安装必要软件..."
-sudo apt-get update -qq
-sudo apt-get install -y -qq \
-    tigervnc-standalone-server \
-    xrdp \
-    xorgxrdp \
-    openssh-server \
-    net-tools \
-    ncdu \
-    htop \
-    curl \
-    wget \
-    git \
-    vim \
-    nano \
-    2>/dev/null || echo "  部分软件包安装失败，继续..."
-
-# 4. 配置 SSH 服务器
-echo "[4/6] 配置 SSH 服务器..."
-sudo mkdir -p /var/run/sshd
-
-# 设置 root 密码
-echo "root:${ROOT_PASSWORD}" | sudo chpasswd
-
-# 配置 SSH
-sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
-sudo sed -i 's/#X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config 2>/dev/null || true
-sudo sed -i 's/#X11UseLocalhost yes/X11UseLocalhost no/' /etc/ssh/sshd_config 2>/dev/null || true
-
-# 生成 SSH 主机密钥
-if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
-    echo "  生成 SSH 主机密钥..."
-    sudo ssh-keygen -A
+# 3. 检查 Docker
+echo "[3/4] 检查 Docker 环境..."
+if ! command -v docker &> /dev/null; then
+    echo "  错误: Docker 未安装，Cloud Shell 应该已预装 Docker"
+    exit 1
 fi
 
-# 启动 SSH 服务
-sudo service ssh restart 2>/dev/null || sudo /usr/sbin/sshd
-sleep 1
+# 安装网络工具用于检查端口
+sudo apt-get update -qq 2>/dev/null || true
+sudo apt-get install -y -qq net-tools socat 2>/dev/null || echo "  网络工具安装跳过"
 
-if netstat -tlnp 2>/dev/null | grep -q ':22'; then
-    echo "  SSH 服务已启动 (端口: 22)"
-else
-    echo "  警告: SSH 服务可能未正常启动"
-fi
-
-# 5. 配置 RDP 服务器
-echo "[5/6] 配置 RDP 服务器..."
-
-# 清理旧的 xrdp 配置
-sudo rm -f /var/run/xrdp/*.pid 2>/dev/null || true
-sudo mkdir -p /var/run/xrdp
-
-# 配置 xrdp 使用 Xvnc 后端
-sudo sed -i 's/^port=3350/port=-1/' /etc/xrdp/sesman.ini 2>/dev/null || true
-sudo sed -i 's/^ListenPort=3350/ListenPort=-1/' /etc/xrdp/sesman.ini 2>/dev/null || true
-sudo sed -i 's/^ssl_protocols=.*/ssl_protocols=TLSv1.2, TLSv1.3/' /etc/xrdp/xrdp.ini 2>/dev/null || true
-sudo sed -i 's/^crypt_level=.*/crypt_level=high/' /etc/xrdp/xrdp.ini 2>/dev/null || true
-
-# 添加xrdp到ssl-cert组
-sudo usermod -a -G ssl-cert xrdp 2>/dev/null || true
-
-# 创建 xrdp 会话启动脚本
-sudo tee /etc/xrdp/startwm.sh > /dev/null << 'XRDP_EOF'
-#!/bin/bash
-# xrdp 会话启动脚本 - 连接到 Docker VNC
-unset DBUS_SESSION_BUS_ADDRESS
-unset XDG_RUNTIME_DIR
-export DISPLAY=:1
-
-# 等待 VNC 服务器准备就绪
-for i in {1..30}; do
-    if nc -z localhost 5900 2>/dev/null; then
-        break
-    fi
-    sleep 1
-done
-
-# 使用 VNC 客户端连接到 Docker 内的 VNC 服务器
-exec x11vnc -display :1 -connect localhost:5900 -forever -repeat 2>/dev/null || \
-    echo "无法连接到 VNC 服务器"
-XRDP_EOF
-sudo chmod +x /etc/xrdp/startwm.sh
-
-# 启动 xrdp 服务
-sudo service xrdp stop 2>/dev/null || true
-sleep 1
-sudo service xrdp start 2>/dev/null || true
-sleep 2
-
-if netstat -tlnp 2>/dev/null | grep -q ':3389'; then
-    echo "  RDP 服务已启动 (端口: 3389)"
-else
-    echo "  警告: RDP 服务可能未正常启动"
-fi
-
-# 6. 启动 Docker 桌面容器
-echo "[6/6] 启动 Docker 桌面容器..."
+# 4. 启动 Docker 桌面容器
+echo "[4/4] 启动桌面容器..."
 
 # 停止并删除旧容器
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
@@ -198,12 +112,12 @@ chmod 600 ~/.vnc/passwd 2>/dev/null || true
 
 # 启动 Docker 容器
 echo "  启动桌面容器 (这可能需要几分钟)..."
+# 使用 0.0.0.0 绑定确保 Tailscale 可以访问 VNC 端口
 docker run -d \
     --name ${CONTAINER_NAME} \
-    -p 8080:80 \
-    -p 5900:5900 \
+    -p 0.0.0.0:8080:80 \
+    -p 0.0.0.0:5900:5900 \
     -v "$HOME:/root" \
-    -v "$HOME/.vnc:/root/.vnc:ro" \
     -e RESOLUTION="${GEOMETRY}" \
     -e VNC_PASSWORD="${VNC_PASSWORD}" \
     -e USER=root \
@@ -225,11 +139,6 @@ else
     echo "  查看日志: docker logs ${CONTAINER_NAME}"
 fi
 
-# 7. 应用网络优化
-echo "[7/7] 应用网络优化..."
-sudo sysctl -w net.ipv4.tcp_fast_open=3 2>/dev/null || true
-sudo sysctl -w net.ipv4.tcp_congestion_control=bbr 2>/dev/null || true
-
 # 输出连接信息
 echo ""
 echo "========================================"
@@ -243,20 +152,22 @@ echo "     地址: https://ssh.cloud.google.com/devshell/proxy?port=8080"
 echo "     或访问: http://localhost:8080"
 echo "     VNC 密码: ${VNC_PASSWORD}"
 echo ""
-echo "  🔌 VNC 客户端:"
+echo "  🔌 VNC 客户端 (通过 Tailscale):"
 TAILSCALE_IP=$(sudo tailscale ip -4 2>/dev/null || echo "<Tailscale-IP>")
 echo "     地址: ${TAILSCALE_IP}:5900"
 echo "     密码: ${VNC_PASSWORD}"
+echo "     ⚠️  注意: Cloud Shell 可能限制出口端口，如果连接失败请使用 Web VNC"
 echo ""
-echo "  🔐 SSH 连接:"
-echo "     命令: ssh root@${TAILSCALE_IP}"
-echo "     密码: ${ROOT_PASSWORD}"
-echo "     注意: 需要在 Tailscale 管理控制台授权设备"
-echo ""
-echo "  💻 RDP 连接 (Windows):"
+echo "  � RDP 连接 (Windows，通过 Tailscale):"
 echo "     地址: ${TAILSCALE_IP}:3389"
 echo "     用户: root"
 echo "     密码: ${ROOT_PASSWORD}"
+echo "     ⚠️  注意: RDP 端口可能受 Cloud Shell 网络限制"
+echo ""
+echo "  � SSH 连接 (通过 Tailscale):"
+echo "     命令: ssh root@${TAILSCALE_IP}"
+echo "     密码: ${ROOT_PASSWORD}"
+echo "     注意: 需要在 Tailscale 管理控制台授权设备"
 echo ""
 echo "管理命令:"
 echo "  • 查看容器日志: docker logs ${CONTAINER_NAME}"
@@ -274,17 +185,6 @@ echo "⚠️  注意事项:"
 echo "  • 如果无法连接，请检查 Tailscale 是否已登录"
 echo "  • 首次使用需要在 Tailscale 控制台授权设备"
 echo "  • Web VNC 可能需要几分钟才能完全启动"
+echo "  • 使用 quick-start.sh 可以重新启动服务"
 echo ""
-echo "保持运行中... (按 Ctrl+C 停止监控)"
-
-# 监控脚本
-while true; do
-    sleep 60
-    if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-        echo "警告: Docker 容器已停止，正在尝试重启..."
-        docker start ${CONTAINER_NAME} 2>/dev/null || true
-    fi
-    if ! pgrep -x "xrdp" > /dev/null; then
-        echo "警告: XRDP 服务已停止"
-    fi
-done
+echo "服务将在后台运行，您可以安全关闭此终端"

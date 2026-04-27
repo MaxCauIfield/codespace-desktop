@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # 快速启动脚本 - 适用于已经初始化过的环境
+# Cloud Shell 版本：仅启动 Docker 容器和 Tailscale
 
 CONTAINER_NAME="cloudshell-desktop"
 
@@ -28,22 +29,10 @@ else
     sleep 3
     
     if [ -n "${TAILSCALE_AUTHKEY:-}" ]; then
-        sudo tailscale up --authkey="${TAILSCALE_AUTHKEY}" --accept-routes --accept-dns=false 2>/dev/null || true
+        sudo tailscale up --authkey="${TAILSCALE_AUTHKEY}" --accept-routes --accept-dns=false --hostname="cloudshell-desktop" 2>/dev/null || true
     else
         echo "⚠️  未设置 TAILSCALE_AUTHKEY，请手动运行: sudo tailscale up"
     fi
-fi
-
-# 检查 SSH
-if ! netstat -tlnp 2>/dev/null | grep -q ':22'; then
-    echo "🔄 启动 SSH 服务..."
-    sudo service ssh restart 2>/dev/null || sudo /usr/sbin/sshd
-fi
-
-# 检查 RDP
-if ! netstat -tlnp 2>/dev/null | grep -q ':3389'; then
-    echo "🔄 启动 RDP 服务..."
-    sudo service xrdp restart 2>/dev/null || true
 fi
 
 echo ""
@@ -53,10 +42,16 @@ echo "=========================================="
 echo ""
 echo "🔗 连接方式:"
 TAILSCALE_IP=$(sudo tailscale ip -4 2>/dev/null || echo "<Tailscale-IP>")
-echo "  • Web VNC:   https://ssh.cloud.google.com/devshell/proxy?port=8080"
-echo "  • VNC 客户端: ${TAILSCALE_IP}:5900"
-echo "  • SSH:       ssh root@${TAILSCALE_IP}"
-echo "  • RDP:       ${TAILSCALE_IP}:3389"
+echo "  🌐 Web VNC (推荐):"
+echo "     https://ssh.cloud.google.com/devshell/proxy?port=8080"
+echo ""
+echo "  🔌 VNC 客户端 (通过 Tailscale):"
+echo "     ${TAILSCALE_IP}:5900 (密码: password)"
+echo "     ⚠️  注意: Cloud Shell 可能限制出口端口"
+echo ""
+echo "  💻 RDP (通过 Tailscale):"
+echo "     ${TAILSCALE_IP}:3389 (用户: root, 密码: cloudshell)"
+echo "     ⚠️  注意: 端口可能受 Cloud Shell 网络限制"
 echo ""
 echo "📊 状态检查:"
 echo "  • 容器状态: docker ps"
