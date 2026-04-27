@@ -2,11 +2,24 @@
 
 基于 Docker 的 LXDE 桌面环境，支持 Tailscale 组网、Web VNC、SSH 和 RDP 连接。
 
-## ⚠️ 重要提示
+## 🚨 首次使用必读：修复权限问题
 
-确保你在 **home 目录** 下操作（运行 `cd ~`），否则会遇到权限错误。
+如果遇到 `Permission denied` 或 `cloudshell_open: command not found`，请在 Cloud Shell 终端执行以下命令修复：
 
-## 🚀 一键部署
+```bash
+# 修复 home 目录权限
+sudo chown -R $USER:$USER $HOME
+chmod 644 $HOME/.bashrc $HOME/.profile 2>/dev/null || true
+
+# 切换到 home 目录
+cd ~
+
+# 手动克隆并运行
+git clone -b GCP-Verson https://github.com/AnnaofArendelle/codespace-desktop.git cloudshell-desktop
+cd cloudshell-desktop && chmod +x install.sh && ./install.sh
+```
+
+## 🚀 一键部署（修复权限后使用）
 
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/AnnaofArendelle/codespace-desktop.git&cloudshell_git_branch=GCP-Verson&cloudshell_shell_cmd=cd%20~%20%26%26%20chmod%20%2Bx%20install.sh%20%26%26%20./install.sh&shellonly=true)
 
