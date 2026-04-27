@@ -4,13 +4,12 @@
 
 ## 🚀 一键部署
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/YOUR_USERNAME/cloudshell-desktop&cloudshell_shell_cmd=chmod%20%2Bx%20install.sh%20%26%26%20./install.sh&shellonly=true)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/AnnaofArendelle/codespace-desktop.git&cloudshell_git_branch=GCP-Verson&cloudshell_shell_cmd=chmod%20%2Bx%20install.sh%20%26%26%20./install.sh&shellonly=true)
 
 ## 📋 前置要求
 
 1. **Google 账号** - 用于访问 Google Cloud Shell
 2. **Tailscale 账号** - 用于安全组网访问
-3. **Fork 本仓库** - 将 `YOUR_USERNAME` 替换为你的 GitHub 用户名
 
 ## 🔧 环境变量配置
 
@@ -63,7 +62,7 @@ export TAILSCALE_AUTHKEY=tskey-auth-xxxxxxxxxxxxxxxxxxxx
 1. 打开 [Google Cloud Shell](https://ssh.cloud.google.com)
 2. 克隆仓库：
    ```bash
-   git clone https://github.com/YOUR_USERNAME/cloudshell-desktop.git
+   git clone -b GCP-Verson https://github.com/AnnaofArendelle/codespace-desktop.git cloudshell-desktop
    cd cloudshell-desktop
    ```
 3. 运行安装脚本（按提示输入密钥）：
@@ -81,7 +80,7 @@ echo 'export TAILSCALE_AUTHKEY=tskey-auth-xxxxxxxx' >> ~/.bashrc
 source ~/.bashrc
 
 # 然后运行安装脚本
-git clone https://github.com/YOUR_USERNAME/cloudshell-desktop.git
+git clone -b GCP-Verson https://github.com/AnnaofArendelle/codespace-desktop.git cloudshell-desktop
 cd cloudshell-desktop && ./install.sh
 ```
 
