@@ -1,4 +1,4 @@
-# GitHub Codespaces 上的 Cinnamon 桌面环境
+# GitHub Codespaces 上的 Cinnamon 桌面环境 - 1.0版本
 
 ## 💻 管理控制台
 
